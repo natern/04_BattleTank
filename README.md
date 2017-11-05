@@ -1,2 +1,3 @@
 # 04_BattleTank
-Unreal Engine 4 Tank Game
+Simple open-world tank combat game vs AI based on
+the Udemy Unreal Engine 4 course.
