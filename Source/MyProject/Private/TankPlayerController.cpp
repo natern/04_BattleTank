@@ -21,5 +21,16 @@ void ATankPlayerController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TankPlayerController couldn't find tank."));
 	}
-	
+	AimRaycast();
+}
+
+void ATankPlayerController::Tick(float deltaSeconds)
+{
+	Super::Tick(deltaSeconds);
+	UE_LOG(LogTemp, Warning, TEXT("TankPlayerController Tick Tock! (%f)"), deltaSeconds);
+}
+
+void ATankPlayerController::AimRaycast()
+{
+
 }
