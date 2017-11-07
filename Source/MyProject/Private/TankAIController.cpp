@@ -39,3 +39,19 @@ ATank* ATankAIController::GetPlayerTank() const
 		return(nullptr);
 	}
 }
+
+void ATankAIController::Tick(float deltaSeconds)
+{
+	Super::Tick(deltaSeconds);
+	Aim();
+}
+
+void ATankAIController::Aim()
+{
+	ATank* targetTank = GetPlayerTank();
+	ATank* controlledTank = GetControlledTank();
+	if(targetTank && controlledTank)
+	{
+		controlledTank->AimAt(targetTank->GetTargetLocation(controlledTank));
+	}
+}
