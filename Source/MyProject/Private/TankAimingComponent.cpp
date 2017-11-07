@@ -3,10 +3,12 @@
 #include "MyProject.h"
 #include "TankAimingComponent.h"
 #include "TankBarrelComponent.h"
+#include "TurretComponent.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent() :
-	barrel(nullptr)
+	barrel(nullptr),
+	turret(nullptr)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -48,7 +50,7 @@ void UTankAimingComponent::AimAt(const FVector& hitLocation, float launchSpeed)
 	if(UGameplayStatics::SuggestProjectileVelocity(this, launchVelocity, launchPosition, hitLocation, launchSpeed, false, traceRadius, 0.f, ESuggestProjVelocityTraceOption::DoNotTrace))
 	{
 		FVector direction = launchVelocity.GetSafeNormal();
-		MoveBarrel(direction);
+		MoveTurretAndBarrel(direction);
 	}
 	else
 	{
@@ -56,20 +58,16 @@ void UTankAimingComponent::AimAt(const FVector& hitLocation, float launchSpeed)
 	}
 }
 
-void UTankAimingComponent::MoveBarrel(const FVector& direction)
+void UTankAimingComponent::MoveTurretAndBarrel(const FVector& direction)
 {
 	auto rotation = direction.Rotation();
-	if (rotation.Pitch > 0.f)
-	{
-		barrel->ElevateBarrel(1.f);
-	}
-	else if (rotation.Pitch < 0.f)
-	{
-		barrel->ElevateBarrel(-1.f);
-	}
+
+	barrel->ElevateBarrel(rotation.Pitch);
+	turret->RotateTurret(rotation.Yaw);
 }
 
-void UTankAimingComponent::SetBarrelReference(UTankBarrelComponent* barrelMesh)
+void UTankAimingComponent::SetTurretAndBarrelReference(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh)
 {
+	turret = turretMesh;
 	barrel = barrelMesh;
 }

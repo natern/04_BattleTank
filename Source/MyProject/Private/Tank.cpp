@@ -24,7 +24,7 @@ void ATank::AimAt(FVector hitLocation)
 	tankAimingComponent->AimAt(hitLocation, launchSpeed);
 }
 
-void ATank::SetBarrelReference(UTankBarrelComponent* barrelMesh)
+void ATank::SetTurretAndBarrelReference(UTurretComponent* turretComponent, UTankBarrelComponent* barrelComponent)
 {
-	tankAimingComponent->SetBarrelReference(barrelMesh);
+	tankAimingComponent->SetTurretAndBarrelReference(turretComponent, barrelComponent);
 }

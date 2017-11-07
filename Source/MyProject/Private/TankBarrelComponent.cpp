@@ -6,27 +6,27 @@
 UTankBarrelComponent::UTankBarrelComponent() :
 	maxDegreesPerSecond(30.f),
 	minElevationDegrees(0.f),
-	maxElevationDegrees(35.f)
+	maxElevationDegrees(35.f),
+	thresholdDegrees(2.f)
 {
 }
 
-void UTankBarrelComponent::ElevateBarrel(const float degreesPerSecond)
+void UTankBarrelComponent::ElevateBarrel(const float pitch)
 {
-	if(degreesPerSecond == 0.f)
+	FRotator resultElevation = RelativeRotation;
+	if(FMath::Abs<float>(pitch - resultElevation.Pitch) < thresholdDegrees)
 	{
 		return;
 	}
-
-	FRotator resultElevation = RelativeRotation;
 	resultElevation.Yaw = 0.f;
 	resultElevation.Roll = 0.f;
 	float deltaSeconds = GetWorld()->GetDeltaSeconds();
-	if (degreesPerSecond > 0.f)
+	if (pitch > resultElevation.Pitch)
 	{
 		resultElevation.Pitch += maxDegreesPerSecond * deltaSeconds;
 		resultElevation.Pitch = FMath::Min<float>(resultElevation.Pitch, maxElevationDegrees);
 	}
-	else if (degreesPerSecond < 0.f)
+	else
 	{
 		resultElevation.Pitch -= maxDegreesPerSecond * deltaSeconds;
 		resultElevation.Pitch = FMath::Max<float>(resultElevation.Pitch, minElevationDegrees);

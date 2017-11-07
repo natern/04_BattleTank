@@ -24,4 +24,6 @@ protected:
 	float minElevationDegrees;
 	UPROPERTY(EditAnywhere, Category = Setup)
 	float maxElevationDegrees;
+	UPROPERTY(EditAnywhere, Category = Setup)
+	float thresholdDegrees;
 };
