@@ -49,7 +49,6 @@ void UTankAimingComponent::AimAt(const FVector& hitLocation, float launchSpeed)
 	{
 		FVector direction = launchVelocity.GetSafeNormal();
 		MoveBarrel(direction);
-		UE_LOG(LogTemp, Warning, TEXT("Tank (%s) aiming at %s with launch speed %f"), *ownerName, *direction.ToString(), launchSpeed);
 	}
 	else
 	{

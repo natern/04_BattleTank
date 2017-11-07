@@ -4,9 +4,9 @@
 #include "TankBarrelComponent.h"
 
 UTankBarrelComponent::UTankBarrelComponent() :
-	maxDegreesPerSecond(100.f),
+	maxDegreesPerSecond(30.f),
 	minElevationDegrees(0.f),
-	maxElevationDegrees(40.f)
+	maxElevationDegrees(35.f)
 {
 }
 
@@ -17,19 +17,19 @@ void UTankBarrelComponent::ElevateBarrel(const float degreesPerSecond)
 		return;
 	}
 
-	FRotator resultElevation = GetForwardVector().Rotation();
+	FRotator resultElevation = RelativeRotation;
 	resultElevation.Yaw = 0.f;
 	resultElevation.Roll = 0.f;
 	float deltaSeconds = GetWorld()->GetDeltaSeconds();
 	if (degreesPerSecond > 0.f)
 	{
 		resultElevation.Pitch += maxDegreesPerSecond * deltaSeconds;
-		resultElevation.Pitch = resultElevation.Pitch > maxElevationDegrees ? maxElevationDegrees : resultElevation.Pitch;
+		resultElevation.Pitch = FMath::Min<float>(resultElevation.Pitch, maxElevationDegrees);
 	}
 	else if (degreesPerSecond < 0.f)
 	{
 		resultElevation.Pitch -= maxDegreesPerSecond * deltaSeconds;
-		resultElevation.Pitch = resultElevation.Pitch < minElevationDegrees ? minElevationDegrees : resultElevation.Pitch;
+		resultElevation.Pitch = FMath::Max<float>(resultElevation.Pitch, minElevationDegrees);
 	}
 	SetRelativeRotation(resultElevation);
 }
