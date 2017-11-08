@@ -14,11 +14,13 @@ class MYPROJECT_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 public:
+	ATankAIController();
 	virtual void BeginPlay() override;
-	ATank* GetControlledTank() const;
-	ATank* GetPlayerTank() const;
 	virtual void Tick(float deltaSeconds) override;
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	bool fireConstantly;
 private:
 	void Aim();
 };

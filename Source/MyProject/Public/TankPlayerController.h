@@ -16,15 +16,15 @@ class MYPROJECT_API ATankPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UUserWidget> wWidgetType;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float reticuleX = 0.5f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float reticuleY = 0.33333f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float rayLength = 500000;
 
 	virtual void BeginPlay() override;

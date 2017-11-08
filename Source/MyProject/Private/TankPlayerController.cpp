@@ -17,15 +17,6 @@ void ATankPlayerController::BeginPlay()
 		}
 		//Todo: cleanup reticule on end, if that's necessary
 	}
-	ATank* tank = GetControlledTank();
-	if (tank)
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("TankPlayerController controlling %s"), *(tank->GetName()));
-	}
-	else
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("TankPlayerController couldn't find tank."));
-	}
 }
 
 ATank* ATankPlayerController::GetControlledTank() const
@@ -37,7 +28,6 @@ void ATankPlayerController::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
 	Aim();
-	//UE_LOG(LogTemp, Warning, TEXT("TankPlayerController Tick Tock! (%f)"), deltaSeconds);
 }
 
 void ATankPlayerController::Aim()
@@ -47,7 +37,7 @@ void ATankPlayerController::Aim()
 		return;
 	}
 	FVector hitLocation; //Out parameter
-	if(DoRaycast(hitLocation))
+	if(DoRaycast(hitLocation) || !hitLocation.IsZero())
 	{
 		GetControlledTank()->AimAt(hitLocation);
 	}
@@ -61,16 +51,17 @@ bool ATankPlayerController::DoRaycast(FVector& hitLocation) const
 	FVector cameraLocation, aimDirection;
 	if (DeprojectScreenPositionToWorld(reticulePos.X, reticulePos.Y, cameraLocation, aimDirection))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("DoRaycast aim direction = %s"), *aimDirection.ToString());
+		const FVector aimEndpoint(cameraLocation + aimDirection * rayLength);
 		FHitResult result;
-		if (GetWorld()->LineTraceSingleByChannel(result, cameraLocation, cameraLocation + aimDirection * rayLength, ECollisionChannel::ECC_Visibility))
+		if (GetWorld()->LineTraceSingleByChannel(result, cameraLocation, aimEndpoint, ECollisionChannel::ECC_Visibility))
 		{
 			hitLocation = result.Location;
 			return(true);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DoRaycast missed"));
+			hitLocation = aimEndpoint;
+			return(false);
 		}
 	}
 	else

@@ -40,11 +40,11 @@ void UTankAimingComponent::AimAt(const FVector& hitLocation, float launchSpeed)
 {
 	if(!barrel)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Error: barrel of UTankAimingComponent is NULL"));
 		return;
 	}
-
 	FVector launchVelocity;
-	FVector launchPosition = barrel->GetSocketLocation(FName("LaunchPosition"));
+	FVector launchPosition = barrel->GetProjectileLaunchPosition();
 	float traceRadius(50.f);
 	const auto ownerName = GetOwner()->GetName();
 	if(UGameplayStatics::SuggestProjectileVelocity(this, launchVelocity, launchPosition, hitLocation, launchSpeed, false, traceRadius, 0.f, ESuggestProjVelocityTraceOption::DoNotTrace))
@@ -54,16 +54,21 @@ void UTankAimingComponent::AimAt(const FVector& hitLocation, float launchSpeed)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Tank (%s) AimAt could not suggest projectile velocity"), *ownerName);
+		launchVelocity = hitLocation - launchPosition;
+		launchVelocity = launchVelocity.GetSafeNormal();
+		MoveTurretAndBarrel(launchVelocity);
+		//UE_LOG(LogTemp, Warning, TEXT("Tank (%s) AimAt could not suggest projectile velocity"), *ownerName);
 	}
 }
 
 void UTankAimingComponent::MoveTurretAndBarrel(const FVector& direction)
 {
-	auto rotation = direction.Rotation();
-
-	barrel->ElevateBarrel(rotation.Pitch);
-	turret->RotateTurret(rotation.Yaw);
+	auto barrelRotator = barrel->GetForwardVector().Rotation();
+	auto aimRotator = direction.Rotation();
+	auto deltaRotator = aimRotator - barrelRotator;
+	//UE_LOG(LogTemp, Warning, TEXT("Barrel yaw: %f, aim yaw: %f, delta yaw: %f"), barrelRotator.Yaw, aimRotator.Yaw, deltaRotator.Yaw);
+	barrel->ElevateBarrel(deltaRotator.Pitch);
+	turret->RotateTurret(deltaRotator.Yaw);
 }
 
 void UTankAimingComponent::SetTurretAndBarrelReference(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh)

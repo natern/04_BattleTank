@@ -8,6 +8,7 @@
 class UTankAimingComponent;
 class UTurretComponent;
 class UTankBarrelComponent;
+class AProjectile;
 
 UCLASS()
 class MYPROJECT_API ATank : public APawn
@@ -24,12 +25,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetTurretAndBarrelReference(UTurretComponent* turretComponent, UTankBarrelComponent* barrelComponent);
 
-	void AimAt(FVector hitLocation);
+	UFUNCTION(BlueprintCallable, Category = Firing)
+	void Fire();
+
+	void AimAt(FVector hitLocation);	
 
 protected:
-	UPROPERTY(EditAnywhere, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
 	float launchSpeed;
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	float reloadTime;
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+		TSubclassOf<AProjectile> projectileType;
 
 	UTankAimingComponent* tankAimingComponent;
 
+private:
+	UTankBarrelComponent* barrel;
+	double lastFireTime;
 };

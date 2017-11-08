@@ -4,52 +4,28 @@
 #include "TurretComponent.h"
 
 UTurretComponent::UTurretComponent() :
-	maxDegreesPerSecond(30.f),
-	thresholdDegrees(2.f)
+	maxDegreesPerSecond(30.f)
 {
 }
 
-void UTurretComponent::RotateTurret(float yaw)
+void UTurretComponent::RotateTurret(float relativeYaw)
 {
-	FRotator resultElevation = RelativeRotation;
-	if(FMath::Abs<float>(yaw - resultElevation.Yaw) < thresholdDegrees)
+	if (relativeYaw > 180.f)
 	{
-		return;
+		relativeYaw -= 360.f;
 	}
+	if (relativeYaw < -180.f)
+	{
+		relativeYaw += 360.f;
+	}
+	relativeYaw = FMath::Clamp<float>(relativeYaw, -1.f, 1.f);
 
-	resultElevation.Roll = 0.f;
-	resultElevation.Pitch = 0.f;
-	float deltaSeconds = GetWorld()->GetDeltaSeconds();
-	
-	float diff = FMath::Abs(yaw - resultElevation.Yaw);
-	
-	if(diff < 180.f)
-	{
-		if (yaw > resultElevation.Yaw)
-		{
-			resultElevation.Yaw += maxDegreesPerSecond * deltaSeconds;
-		}
-		else
-		{
-			resultElevation.Yaw -= maxDegreesPerSecond * deltaSeconds;
-		}
-	}
-	else
-	{
-		if (yaw > resultElevation.Yaw)
-		{
-			resultElevation.Yaw -= maxDegreesPerSecond * deltaSeconds;
-		}
-		else
-		{
-			resultElevation.Yaw += maxDegreesPerSecond * deltaSeconds;
-		}
-	}
-	while(resultElevation.Yaw > 360.f)
-	{
-		resultElevation.Yaw -= 360.f;
-	}
-	SetRelativeRotation(resultElevation);
+	FRotator resultRotation(0.f);
+	resultRotation.Yaw = (relativeYaw * maxDegreesPerSecond * GetWorld()->GetDeltaSeconds());
+	resultRotation.Yaw += RelativeRotation.Yaw;
+	resultRotation.Yaw = resultRotation.Yaw > 360.f ? resultRotation.Yaw - 360.f : resultRotation.Yaw;
+	resultRotation.Yaw = resultRotation.Yaw < -360.f ? resultRotation.Yaw + 360.f : resultRotation.Yaw;
+	SetRelativeRotation(resultRotation);
 }
 
 

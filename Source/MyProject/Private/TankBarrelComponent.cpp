@@ -6,31 +6,26 @@
 UTankBarrelComponent::UTankBarrelComponent() :
 	maxDegreesPerSecond(30.f),
 	minElevationDegrees(0.f),
-	maxElevationDegrees(35.f),
-	thresholdDegrees(2.f)
+	maxElevationDegrees(35.f)
 {
 }
 
-void UTankBarrelComponent::ElevateBarrel(const float pitch)
+void UTankBarrelComponent::ElevateBarrel( float relativePitch)
 {
-	FRotator resultElevation = RelativeRotation;
-	if(FMath::Abs<float>(pitch - resultElevation.Pitch) < thresholdDegrees)
-	{
-		return;
-	}
-	resultElevation.Yaw = 0.f;
-	resultElevation.Roll = 0.f;
-	float deltaSeconds = GetWorld()->GetDeltaSeconds();
-	if (pitch > resultElevation.Pitch)
-	{
-		resultElevation.Pitch += maxDegreesPerSecond * deltaSeconds;
-		resultElevation.Pitch = FMath::Min<float>(resultElevation.Pitch, maxElevationDegrees);
-	}
-	else
-	{
-		resultElevation.Pitch -= maxDegreesPerSecond * deltaSeconds;
-		resultElevation.Pitch = FMath::Max<float>(resultElevation.Pitch, minElevationDegrees);
-	}
+	relativePitch = FMath::Clamp<float>(relativePitch, -1.f, 1.f);
+	FRotator resultElevation(0.f);
+	resultElevation.Pitch = relativePitch * maxDegreesPerSecond * GetWorld()->GetDeltaSeconds();
+	resultElevation.Pitch += RelativeRotation.Pitch;
+	resultElevation.Pitch = FMath::Clamp<float>(resultElevation.Pitch, minElevationDegrees, maxElevationDegrees);
 	SetRelativeRotation(resultElevation);
 }
 
+FVector UTankBarrelComponent::GetProjectileLaunchPosition() const
+{
+	return(GetSocketLocation(FName("LaunchPosition")));
+}
+
+FRotator UTankBarrelComponent::GetProjectileLaunchRotation() const
+{
+	return(GetSocketRotation(FName("LaunchPosition")));
+}

@@ -8,18 +8,16 @@
 /**
  * 
  */
-UCLASS(meta = (BlueprintSpawnableComponent), hidecategories = ("Collision", "Physics") )
+UCLASS(meta = (BlueprintSpawnableComponent))//, hidecategories = ("Collision", "Physics") )
 class MYPROJECT_API UTurretComponent : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 	
 public:
 	UTurretComponent();
-	void RotateTurret(float degreesPerSecond);
+	void RotateTurret(float relativeYaw);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = Setup)
 	float maxDegreesPerSecond;
-	UPROPERTY(EditAnywhere, Category = Setup)
-	float thresholdDegrees;
 };

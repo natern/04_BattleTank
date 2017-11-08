@@ -8,22 +8,21 @@
 /**
  * 
  */
-UCLASS(meta = (BlueprintSpawnableComponent), hidecategories = ("Collision", "Physics"))
+UCLASS(meta = (BlueprintSpawnableComponent))//, hidecategories = ("Collision", "Physics"))
 class MYPROJECT_API UTankBarrelComponent : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 	
 public:
 	UTankBarrelComponent();
-	void ElevateBarrel(const float degreesPerSecond);
-
+	void ElevateBarrel(float relativePitch);
+	FVector GetProjectileLaunchPosition() const;
+	FRotator GetProjectileLaunchRotation() const;
 protected:
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float maxDegreesPerSecond;
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float minElevationDegrees;
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float maxElevationDegrees;
-	UPROPERTY(EditAnywhere, Category = Setup)
-	float thresholdDegrees;
 };
