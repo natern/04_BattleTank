@@ -6,6 +6,7 @@
 #include "Tank.generated.h"
 
 class UTankAimingComponent;
+class UTankMovementComponent;
 class UTurretComponent;
 class UTankBarrelComponent;
 class AProjectile;
@@ -36,10 +37,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
 	float reloadTime;
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
-		TSubclassOf<AProjectile> projectileType;
+	TSubclassOf<AProjectile> projectileType;
 
 	UTankAimingComponent* tankAimingComponent;
-
 private:
 	UTankBarrelComponent* barrel;
 	double lastFireTime;

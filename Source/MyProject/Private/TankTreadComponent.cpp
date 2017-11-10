@@ -10,12 +10,11 @@ UTankTreadComponent::UTankTreadComponent() :
 
 void UTankTreadComponent::SetThrottle(float val)
 {
-	val = FMath::Clamp<float>(val, -1.f, 1.f);
-	FVector force = GetForwardVector() * maxDrivingForce;
+	val = FMath::Clamp<float>(val, -1.f, 1.f) * maxDrivingForce;
+	FVector force = GetForwardVector() * val;
 	FVector forceLocation = GetComponentLocation();
 	UPrimitiveComponent* root = Cast<UPrimitiveComponent>(GetAttachmentRoot());
 	root->AddForceAtLocation(force, forceLocation);
-	UE_LOG(LogTemp, Warning, TEXT("UTankTreadComponent (%s) adding force of %f."), *(GetName()), maxDrivingForce);
 }
 
 
