@@ -16,10 +16,17 @@ class MYPROJECT_API UTankMovementComponent : public UNavMovementComponent
 public:
 	UTankMovementComponent();
 	
-	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void Initialize(UTankTreadComponent* leftTrack, UTankTreadComponent* rightTrack);
+
+	UFUNCTION(BlueprintCallable, Category = Input)
+	void IntendMoveForwardAnalog(float val);
+
+	UFUNCTION(BlueprintCallable, Category = Input)
+	void IntendMoveRightAnalog(float val);
 
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void IntendMoveForward();

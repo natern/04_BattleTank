@@ -6,7 +6,8 @@
 #include "TankPlayerController.h"
 
 ATankAIController::ATankAIController() :
-	fireConstantly(false)
+	fireConstantly(false),
+	acceptanceRadius(3000.f)
 {
 }
 
@@ -27,6 +28,7 @@ void ATankAIController::Aim()
 	ATank* playerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if(playerTank && controlledTank)
 	{
+		MoveToActor(playerTank, acceptanceRadius);
 		controlledTank->AimAt(playerTank->GetTargetLocation(controlledTank));
 		if (fireConstantly)
 		{

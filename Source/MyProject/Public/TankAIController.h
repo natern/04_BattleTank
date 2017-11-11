@@ -21,6 +21,11 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	bool fireConstantly;
+
+	//How close should the AI try to get
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	float acceptanceRadius;
+
 private:
 	void Aim();
 };

@@ -85,6 +85,9 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 				leftThrottle = rightThrottle = 0.f;
 			}
 		}
+
+		//auto tankName = GetOwner()->GetName();
+		//UE_LOG(LogTemp, Warning, TEXT("%s moving to %f, %f"), *tankName, rightThrottle, leftThrottle);
 	}
 	if (leftThrottle != 0.f)
 	{
@@ -94,12 +97,48 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	{
 		trackRight->SetThrottle(rightThrottle);
 	}
+	rightThrottle = leftThrottle = 0.f;
+}
+
+
+void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
+{
+	// Replace Super functionality since tanks have unique movement
+	FVector moveDir(MoveVelocity);
+	moveDir.Z = 0.f;
+	if (moveDir.SizeSquared() > 0.f) //make sure we still want to move
+	{
+		moveDir = moveDir.GetSafeNormal();
+		auto tankFacing = GetOwner()->GetActorForwardVector();
+		tankFacing.Z = 0;
+		float forwardComponent = FVector::DotProduct(tankFacing, moveDir);
+		
+		auto cross = FVector::CrossProduct(tankFacing, moveDir);
+		IntendMoveForwardAnalog(forwardComponent);
+		IntendMoveRightAnalog(cross.Z);
+
+		auto tankName = GetOwner()->GetName();
+		auto velocityStr = MoveVelocity.ToString();
+		UE_LOG(LogTemp, Warning, TEXT("%s moving to %s"), *tankName, *velocityStr);
+	}
 }
 
 void UTankMovementComponent::Initialize(UTankTreadComponent* leftTrack, UTankTreadComponent* rightTrack)
 {
 	trackLeft = leftTrack;
 	trackRight = rightTrack;
+}
+
+void UTankMovementComponent::IntendMoveForwardAnalog(float val)
+{
+	leftThrottle += val;
+	rightThrottle += val;
+}
+
+void UTankMovementComponent::IntendMoveRightAnalog(float val)
+{
+	leftThrottle += val;
+	rightThrottle += -val;
 }
 
 void UTankMovementComponent::IntendMoveForward()
