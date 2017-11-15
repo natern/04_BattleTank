@@ -17,8 +17,6 @@ UTankAimingComponent::UTankAimingComponent() :
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -26,9 +24,8 @@ UTankAimingComponent::UTankAimingComponent() :
 void UTankAimingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+    lastFireTime = FPlatformTime::Seconds();
+    firingState = EFiringState::E_RELOADING;
 }
 
 
@@ -44,7 +41,6 @@ void UTankAimingComponent::TickComponent( float DeltaTime, ELevelTick TickType, 
             firingState = EFiringState::E_AIMING;
         }
     }
-	// ...
 }
 
 void UTankAimingComponent::AimAt(const FVector& hitLocation)
@@ -77,14 +73,17 @@ void UTankAimingComponent::MoveTurretAndBarrel(const FVector& direction)
 	auto barrelRotator = barrel->GetForwardVector().Rotation();
 	auto aimRotator = direction.Rotation();
 	auto deltaRotator = aimRotator - barrelRotator;
-	if (deltaRotator.Vector().SizeSquared() < 0.1f)
-	{
-		firingState = EFiringState::E_READY;
-	}
-	else if(firingState != EFiringState::E_AIMING)
-	{
-		firingState = EFiringState::E_AIMING;
-	}
+    if(IsReloaded())
+    {
+        if(deltaRotator.Vector().SizeSquared() < 0.1f)
+        {
+            firingState = EFiringState::E_READY;
+        }
+        else if(firingState != EFiringState::E_AIMING)
+        {
+            firingState = EFiringState::E_AIMING;
+        }
+    }
 	//UE_LOG(LogTemp, Warning, TEXT("Barrel yaw: %f, aim yaw: %f, delta yaw: %f"), barrelRotator.Yaw, aimRotator.Yaw, deltaRotator.Yaw);
 	barrel->ElevateBarrel(deltaRotator.Pitch);
 	turret->RotateTurret(deltaRotator.Yaw);
@@ -127,19 +126,15 @@ void UTankAimingComponent::Fire()
 {
     if(IsReloaded())
     {
-        SetReloading();
         AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(projectileType, barrel->GetProjectileLaunchPosition(), barrel->GetProjectileLaunchRotation());
         if(projectile)
         {
             projectile->Launch(launchSpeed);
+            SetReloading();
         }
         else
         {
             UE_LOG(LogTemp, Warning, TEXT("Tank got NULL projectile"));
         }
-    }
-    else
-    {
-        SetReloading();
     }
 }

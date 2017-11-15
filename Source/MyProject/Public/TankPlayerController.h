@@ -3,10 +3,9 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
+#include "TankAimingComponent.h"
 #include "TankPlayerController.generated.h"
 
-class UUserWidget;
-class UTankAimingComponent;
 /**
  * 
  */
@@ -21,7 +20,7 @@ public:
     void FoundAimingComponent(UTankAimingComponent* aimingComponent);
 
     UFUNCTION(BlueprintImplementableEvent, Category = "State")
-    void OnFiringStateChanged(UTankAimingComponent* aimingComponent);
+    void FiringStateChanged(EFiringState firingState);
 
 	UPROPERTY(EditDefaultsOnly)
 	float reticuleX = 0.5f;
@@ -41,5 +40,6 @@ private:
 	void Aim();
 	bool DoRaycast(FVector& hitLocation) const;
 
-    UTankAimingComponent* aimingComponent;
+    UTankAimingComponent* tankAimingComponent;
+    EFiringState oldFiringState;
 };

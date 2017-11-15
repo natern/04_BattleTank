@@ -3,20 +3,18 @@
 #include "MyProject.h"
 #include "TankPlayerController.h"
 #include "TankAimingComponent.h"
-#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
-#include "Tank.h"
 
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-    ATank* tank = Cast<ATank>(GetPawn());
+    oldFiringState = EFiringState::E_RELOADING;
+    APawn* tank = GetPawn();
     if(ensure(tank))
     {
-        aimingComponent = tank->FindComponentByClass<UTankAimingComponent>();
-        if(ensure(aimingComponent))
+        tankAimingComponent = tank->FindComponentByClass<UTankAimingComponent>();
+        if(ensure(tankAimingComponent))
         {
-            FoundAimingComponent(aimingComponent);
+            FoundAimingComponent(tankAimingComponent);
         }
     }
 }
@@ -24,19 +22,24 @@ void ATankPlayerController::BeginPlay()
 void ATankPlayerController::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
-	Aim();
+    if(tankAimingComponent)
+    {
+        Aim();
+        EFiringState newState = tankAimingComponent->GetFiringState();
+        if(newState != oldFiringState)
+        {
+            oldFiringState = newState;
+            FiringStateChanged(newState);
+        }
+    }
 }
 
 void ATankPlayerController::Aim()
 {
-	if(!ensure(aimingComponent))
-	{
-		return;
-	}
 	FVector hitLocation; //Out parameter
 	if(DoRaycast(hitLocation) || !hitLocation.IsZero())
 	{
-        aimingComponent->AimAt(hitLocation);
+        tankAimingComponent->AimAt(hitLocation);
 	}
 }
 

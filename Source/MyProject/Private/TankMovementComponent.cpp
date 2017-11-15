@@ -119,7 +119,7 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 
 		auto tankName = GetOwner()->GetName();
 		auto velocityStr = MoveVelocity.ToString();
-		UE_LOG(LogTemp, Warning, TEXT("%s moving to %s"), *tankName, *velocityStr);
+		//UE_LOG(LogTemp, Warning, TEXT("%s moving to %s"), *tankName, *velocityStr);
 	}
 }
 
