@@ -19,9 +19,6 @@ public:
     UFUNCTION(BlueprintImplementableEvent, Category = "State")
     void FoundAimingComponent(UTankAimingComponent* aimingComponent);
 
-    UFUNCTION(BlueprintImplementableEvent, Category = "State")
-    void FiringStateChanged(EFiringState firingState);
-
 	UPROPERTY(EditDefaultsOnly)
 	float reticuleX = 0.5f;
 	UPROPERTY(EditDefaultsOnly)
@@ -41,5 +38,4 @@ private:
 	bool DoRaycast(FVector& hitLocation) const;
 
     UTankAimingComponent* tankAimingComponent;
-    EFiringState oldFiringState;
 };

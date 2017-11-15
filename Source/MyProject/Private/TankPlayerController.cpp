@@ -7,7 +7,6 @@
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-    oldFiringState = EFiringState::E_RELOADING;
     APawn* tank = GetPawn();
     if(ensure(tank))
     {
@@ -25,12 +24,6 @@ void ATankPlayerController::Tick(float deltaSeconds)
     if(tankAimingComponent)
     {
         Aim();
-        EFiringState newState = tankAimingComponent->GetFiringState();
-        if(newState != oldFiringState)
-        {
-            oldFiringState = newState;
-            FiringStateChanged(newState);
-        }
     }
 }
 

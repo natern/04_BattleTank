@@ -15,11 +15,6 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-    UTankAimingComponent* tankAimingComponent = FindComponentByClass<UTankAimingComponent>();
-    if(ensure(tankAimingComponent))
-    {
-        FoundAimingComponent(tankAimingComponent);
-    }
 }
 
 

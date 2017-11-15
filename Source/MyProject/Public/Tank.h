@@ -18,7 +18,4 @@ public:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-    UFUNCTION(BlueprintImplementableEvent, Category = "State")
-    void FoundAimingComponent(UTankAimingComponent* aimingComponent);
 };
