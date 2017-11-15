@@ -70,23 +70,27 @@ void UTankAimingComponent::AimAt(const FVector& hitLocation)
 
 void UTankAimingComponent::MoveTurretAndBarrel(const FVector& direction)
 {
-	auto barrelRotator = barrel->GetForwardVector().Rotation();
-	auto aimRotator = direction.Rotation();
-	auto deltaRotator = aimRotator - barrelRotator;
-    if(IsReloaded())
+    if(ensure(barrel && turret))
     {
-        if(deltaRotator.Vector().SizeSquared() < 0.1f)
+        FVector barrelForward = barrel->GetForwardVector();
+        auto barrelRotator = barrelForward.Rotation();
+        auto aimRotator = direction.Rotation();
+        auto deltaRotator = aimRotator - barrelRotator;
+        if(IsReloaded())
         {
-            firingState = EFiringState::E_READY;
+            if(barrelForward.Equals(direction, 0.01f))
+            {
+                firingState = EFiringState::E_READY;
+            }
+            else if(firingState != EFiringState::E_AIMING)
+            {
+                firingState = EFiringState::E_AIMING;
+            }
         }
-        else if(firingState != EFiringState::E_AIMING)
-        {
-            firingState = EFiringState::E_AIMING;
-        }
+        //UE_LOG(LogTemp, Warning, TEXT("Barrel yaw: %f, aim yaw: %f, delta yaw: %f"), barrelRotator.Yaw, aimRotator.Yaw, deltaRotator.Yaw);
+        barrel->ElevateBarrel(deltaRotator.Pitch);
+        turret->RotateTurret(deltaRotator.Yaw);
     }
-	//UE_LOG(LogTemp, Warning, TEXT("Barrel yaw: %f, aim yaw: %f, delta yaw: %f"), barrelRotator.Yaw, aimRotator.Yaw, deltaRotator.Yaw);
-	barrel->ElevateBarrel(deltaRotator.Pitch);
-	turret->RotateTurret(deltaRotator.Yaw);
 }
 
 void UTankAimingComponent::Initialize(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh)
