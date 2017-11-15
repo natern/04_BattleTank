@@ -30,7 +30,7 @@ void UTankAimingComponent::BeginPlay()
 
 
 // Called every frame
-void UTankAimingComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
     if(firingState == EFiringState::E_RELOADING)
@@ -101,7 +101,7 @@ void UTankAimingComponent::Initialize(UTurretComponent* turretMesh, UTankBarrelC
 
 bool UTankAimingComponent::IsReloaded() const
 {
-    return(firingState != EFiringState::E_RELOADING);
+    return(firingState != EFiringState::E_RELOADING && firingState != EFiringState::E_EMPTY);
 }
 
 EFiringState UTankAimingComponent::GetFiringState() const
@@ -109,11 +109,23 @@ EFiringState UTankAimingComponent::GetFiringState() const
 	return(firingState);
 }
 
+uint8 UTankAimingComponent::GetAmmoCapacity() const
+{
+    return(ammoCapacity);
+}
+
 void UTankAimingComponent::SetReloading()
 {
-    if(firingState != EFiringState::E_RELOADING)
+    if(firingState != EFiringState::E_RELOADING && firingState != EFiringState::E_EMPTY)
     {
-        firingState = EFiringState::E_RELOADING;
+        if(ammoCapacity > 0)
+        {
+            firingState = EFiringState::E_RELOADING;
+        }
+        else
+        {
+            firingState = EFiringState::E_EMPTY;
+        }
         lastFireTime = FPlatformTime::Seconds();
     }
 }
@@ -134,6 +146,7 @@ void UTankAimingComponent::Fire()
         if(projectile)
         {
             projectile->Launch(launchSpeed);
+            ammoCapacity -= 1;
             SetReloading();
         }
         else

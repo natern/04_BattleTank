@@ -14,7 +14,8 @@ enum class EFiringState : uint8
 {
 	E_RELOADING = 0,
 	E_AIMING,
-	E_READY
+	E_READY,
+    E_EMPTY
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -41,6 +42,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Firing")
     void Fire();
 
+    UFUNCTION(BlueprintCallable, Category = "Firing")
+    uint8 GetAmmoCapacity() const;
+
     UPROPERTY(EditDefaultsOnly, Category = "Firing")
     float launchSpeed;
     UPROPERTY(EditDefaultsOnly, Category = "Firing")
@@ -49,6 +53,10 @@ public:
     TSubclassOf<AProjectile> projectileType;
 
     void AimAt(const FVector& hitLocation);
+
+protected:
+    UPROPERTY(EditDefaultsOnly, Category = "Firing")
+    uint8 ammoCapacity;
 
 private:
     void MoveTurretAndBarrel(const FVector& direction);

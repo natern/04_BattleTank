@@ -30,7 +30,7 @@ void ATankAIController::Aim()
 	{
 		MoveToActor(playerTank, acceptanceRadius);
         aimingComponent->AimAt(playerTank->GetTargetLocation(controlledTank));
-		if(fireConstantly)
+		if(fireConstantly && aimingComponent->GetFiringState() == EFiringState::E_READY)
 		{
             aimingComponent->Fire();
 		}

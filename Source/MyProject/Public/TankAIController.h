@@ -9,7 +9,7 @@ class ATank;
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYPROJECT_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
