@@ -5,11 +5,8 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
-class UTankAimingComponent;
-class UTankMovementComponent;
-class UTurretComponent;
-class UTankBarrelComponent;
 class AProjectile;
+class UTankAimingComponent;
 
 UCLASS()
 class MYPROJECT_API ATank : public APawn
@@ -23,24 +20,22 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetTurretAndBarrelReference(UTurretComponent* turretComponent, UTankBarrelComponent* barrelComponent);
+    UFUNCTION(BlueprintImplementableEvent, Category = "State")
+    void FoundAimingComponent(UTankAimingComponent* aimingComponent);
 
-	UFUNCTION(BlueprintCallable, Category = Firing)
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void Fire();
 
 	void AimAt(FVector hitLocation);	
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float launchSpeed;
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float reloadTime;
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	TSubclassOf<AProjectile> projectileType;
 
-	UTankAimingComponent* tankAimingComponent;
 private:
-	UTankBarrelComponent* barrel;
-	double lastFireTime;
+    UTankAimingComponent* tankAimingComponent;
 };

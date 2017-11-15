@@ -2,21 +2,23 @@
 
 #include "MyProject.h"
 #include "TankPlayerController.h"
+#include "TankAimingComponent.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Tank.h"
 
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	if(wWidgetType)
-	{
-		mReticule = CreateWidget<UUserWidget>(this, wWidgetType);
-		if(mReticule)
-		{
-			mReticule->AddToViewport();
-		}
-		//Todo: cleanup reticule on end, if that's necessary
-	}
+
+    ATank* tank = GetControlledTank();
+    if(ensure(tank))
+    {
+        UTankAimingComponent* tankAimingComponent = tank->FindComponentByClass<UTankAimingComponent>();
+        if(ensure(tankAimingComponent))
+        {
+            FoundAimingComponent(tankAimingComponent);
+        }
+    }
 }
 
 ATank* ATankPlayerController::GetControlledTank() const
@@ -32,7 +34,7 @@ void ATankPlayerController::Tick(float deltaSeconds)
 
 void ATankPlayerController::Aim()
 {
-	if (!GetControlledTank())
+	if(!ensure(GetControlledTank()))
 	{
 		return;
 	}

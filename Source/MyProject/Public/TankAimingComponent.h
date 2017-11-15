@@ -8,7 +8,15 @@
 class UTankBarrelComponent;
 class UTurretComponent;
 
-UCLASS(meta=(BlueprintSpawnableComponent) )
+UENUM()
+enum class EFiringState : uint8
+{
+	E_RELOADING = 0,
+	E_AIMING,
+	E_READY
+};
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYPROJECT_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -23,10 +31,25 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
+    UFUNCTION(BlueprintCallable, Category = "Setup")
+    void Initialize(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh);
+
 	void AimAt(const FVector& hitLocation, float launchSpeed);
 	void MoveTurretAndBarrel(const FVector& direction);
-	void SetTurretAndBarrelReference(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh);
+    bool IsReloaded() const;
+	void SetReloading();
+	void SetReloaded();
+
+    FVector GetLaunchPosition() const;
+    FRotator GetLaunchRotation() const;
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	EFiringState GetFiringState() const;
+
 private:
+	EFiringState firingState;
 	UTankBarrelComponent* barrel;
 	UTurretComponent* turret;
+    float reloadTime;
+    double lastFireTime;
 };

@@ -7,8 +7,11 @@
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent() :
+	firingState(EFiringState::E_RELOADING),
 	barrel(nullptr),
-	turret(nullptr)
+	turret(nullptr),
+    reloadTime(1.f),
+    lastFireTime(0.0)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -32,13 +35,20 @@ void UTankAimingComponent::BeginPlay()
 void UTankAimingComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-
+    if(firingState == EFiringState::E_RELOADING)
+    {
+        bool isReloaded = (FPlatformTime::Seconds() - lastFireTime) > reloadTime;
+        if(isReloaded)
+        {
+            firingState = EFiringState::E_AIMING;
+        }
+    }
 	// ...
 }
 
 void UTankAimingComponent::AimAt(const FVector& hitLocation, float launchSpeed)
 {
-	if(!barrel)
+	if(!ensure(barrel))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Error: barrel of UTankAimingComponent is NULL"));
 		return;
@@ -66,13 +76,58 @@ void UTankAimingComponent::MoveTurretAndBarrel(const FVector& direction)
 	auto barrelRotator = barrel->GetForwardVector().Rotation();
 	auto aimRotator = direction.Rotation();
 	auto deltaRotator = aimRotator - barrelRotator;
+	if (deltaRotator.Vector().SizeSquared() < 0.1f)
+	{
+		firingState = EFiringState::E_READY;
+	}
+	else if(firingState != EFiringState::E_AIMING)
+	{
+		firingState = EFiringState::E_AIMING;
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("Barrel yaw: %f, aim yaw: %f, delta yaw: %f"), barrelRotator.Yaw, aimRotator.Yaw, deltaRotator.Yaw);
 	barrel->ElevateBarrel(deltaRotator.Pitch);
 	turret->RotateTurret(deltaRotator.Yaw);
 }
 
-void UTankAimingComponent::SetTurretAndBarrelReference(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh)
+void UTankAimingComponent::Initialize(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh)
 {
 	turret = turretMesh;
 	barrel = barrelMesh;
+}
+
+bool UTankAimingComponent::IsReloaded() const
+{
+    return(firingState != EFiringState::E_RELOADING);
+}
+
+EFiringState UTankAimingComponent::GetFiringState() const
+{
+	return(firingState);
+}
+
+void UTankAimingComponent::SetReloading()
+{
+    if(firingState != EFiringState::E_RELOADING)
+    {
+        firingState = EFiringState::E_RELOADING;
+        lastFireTime = FPlatformTime::Seconds();
+    }
+}
+
+void UTankAimingComponent::SetReloaded()
+{
+	if(firingState == EFiringState::E_RELOADING)
+	{
+		firingState = EFiringState::E_AIMING;
+	}
+}
+
+FRotator UTankAimingComponent::GetLaunchRotation() const
+{
+    return(barrel->GetProjectileLaunchRotation());
+}
+
+FVector UTankAimingComponent::GetLaunchPosition() const
+{
+    return(barrel->GetProjectileLaunchPosition());
 }

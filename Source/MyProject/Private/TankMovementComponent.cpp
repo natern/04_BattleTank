@@ -20,13 +20,13 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!trackLeft || !trackRight)
+	if(!ensure(trackLeft && trackRight))
 	{
 		return;
 	}
 
 	auto tank = GetOwner();
-	if(!tank)
+	if(!ensure(tank))
 	{
 		return;
 	}

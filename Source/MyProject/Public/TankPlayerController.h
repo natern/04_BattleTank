@@ -7,6 +7,7 @@
 
 class UUserWidget;
 class ATank;
+class UTankAimingComponent;
 /**
  * 
  */
@@ -16,8 +17,12 @@ class MYPROJECT_API ATankPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<class UUserWidget> wWidgetType;
+
+    UFUNCTION(BlueprintImplementableEvent, Category = "State")
+    void FoundAimingComponent(UTankAimingComponent* aimingComponent);
+
+    UFUNCTION(BlueprintImplementableEvent, Category = "State")
+    void OnFiringStateChanged(UTankAimingComponent* aimingComponent);
 
 	UPROPERTY(EditDefaultsOnly)
 	float reticuleX = 0.5f;
@@ -29,11 +34,11 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaSeconds) override;
+	
+protected:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	ATank* GetControlledTank() const;
 
-
-
-	UUserWidget* mReticule;
 private:
 	void Aim();
 	bool DoRaycast(FVector& hitLocation) const;
