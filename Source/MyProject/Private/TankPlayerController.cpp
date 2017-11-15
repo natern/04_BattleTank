@@ -10,20 +10,15 @@ void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-    ATank* tank = GetControlledTank();
+    ATank* tank = Cast<ATank>(GetPawn());
     if(ensure(tank))
     {
-        UTankAimingComponent* tankAimingComponent = tank->FindComponentByClass<UTankAimingComponent>();
-        if(ensure(tankAimingComponent))
+        aimingComponent = tank->FindComponentByClass<UTankAimingComponent>();
+        if(ensure(aimingComponent))
         {
-            FoundAimingComponent(tankAimingComponent);
+            FoundAimingComponent(aimingComponent);
         }
     }
-}
-
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return(Cast<ATank>(GetPawn()));
 }
 
 void ATankPlayerController::Tick(float deltaSeconds)
@@ -34,14 +29,14 @@ void ATankPlayerController::Tick(float deltaSeconds)
 
 void ATankPlayerController::Aim()
 {
-	if(!ensure(GetControlledTank()))
+	if(!ensure(aimingComponent))
 	{
 		return;
 	}
 	FVector hitLocation; //Out parameter
 	if(DoRaycast(hitLocation) || !hitLocation.IsZero())
 	{
-		GetControlledTank()->AimAt(hitLocation);
+        aimingComponent->AimAt(hitLocation);
 	}
 }
 

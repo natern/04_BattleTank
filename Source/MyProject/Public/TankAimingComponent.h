@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Projectile.h"
 #include "TankAimingComponent.generated.h"
 
 class UTankBarrelComponent;
@@ -34,22 +35,29 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Setup")
     void Initialize(UTurretComponent* turretMesh, UTankBarrelComponent* barrelMesh);
 
-	void AimAt(const FVector& hitLocation, float launchSpeed);
-	void MoveTurretAndBarrel(const FVector& direction);
-    bool IsReloaded() const;
-	void SetReloading();
-	void SetReloaded();
-
-    FVector GetLaunchPosition() const;
-    FRotator GetLaunchRotation() const;
-
 	UFUNCTION(BlueprintCallable, Category = "State")
 	EFiringState GetFiringState() const;
 
+    UFUNCTION(BlueprintCallable, Category = "Firing")
+    void Fire();
+
+    UPROPERTY(EditDefaultsOnly, Category = "Firing")
+    float launchSpeed;
+    UPROPERTY(EditDefaultsOnly, Category = "Firing")
+    float reloadTime;
+    UPROPERTY(EditDefaultsOnly, Category = "Firing")
+    TSubclassOf<AProjectile> projectileType;
+
+    void AimAt(const FVector& hitLocation);
+
 private:
+    void MoveTurretAndBarrel(const FVector& direction);
+    bool IsReloaded() const;
+    void SetReloading();
+    void SetReloaded();
+
 	EFiringState firingState;
 	UTankBarrelComponent* barrel;
 	UTurretComponent* turret;
-    float reloadTime;
     double lastFireTime;
 };

@@ -5,7 +5,6 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
-class AProjectile;
 class UTankAimingComponent;
 
 UCLASS()
@@ -22,20 +21,4 @@ public:
 	
     UFUNCTION(BlueprintImplementableEvent, Category = "State")
     void FoundAimingComponent(UTankAimingComponent* aimingComponent);
-
-	UFUNCTION(BlueprintCallable, Category = "Firing")
-	void Fire();
-
-	void AimAt(FVector hitLocation);	
-
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float launchSpeed;
-	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float reloadTime;
-	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	TSubclassOf<AProjectile> projectileType;
-
-private:
-    UTankAimingComponent* tankAimingComponent;
 };

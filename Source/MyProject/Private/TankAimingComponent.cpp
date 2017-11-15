@@ -7,10 +7,11 @@
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent() :
+    launchSpeed(50000.f),
+    reloadTime(1.f),
 	firingState(EFiringState::E_RELOADING),
 	barrel(nullptr),
 	turret(nullptr),
-    reloadTime(1.f),
     lastFireTime(0.0)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -46,7 +47,7 @@ void UTankAimingComponent::TickComponent( float DeltaTime, ELevelTick TickType, 
 	// ...
 }
 
-void UTankAimingComponent::AimAt(const FVector& hitLocation, float launchSpeed)
+void UTankAimingComponent::AimAt(const FVector& hitLocation)
 {
 	if(!ensure(barrel))
 	{
@@ -122,12 +123,23 @@ void UTankAimingComponent::SetReloaded()
 	}
 }
 
-FRotator UTankAimingComponent::GetLaunchRotation() const
+void UTankAimingComponent::Fire()
 {
-    return(barrel->GetProjectileLaunchRotation());
-}
-
-FVector UTankAimingComponent::GetLaunchPosition() const
-{
-    return(barrel->GetProjectileLaunchPosition());
+    if(IsReloaded())
+    {
+        SetReloading();
+        AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(projectileType, barrel->GetProjectileLaunchPosition(), barrel->GetProjectileLaunchRotation());
+        if(projectile)
+        {
+            projectile->Launch(launchSpeed);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Tank got NULL projectile"));
+        }
+    }
+    else
+    {
+        SetReloading();
+    }
 }

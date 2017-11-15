@@ -6,7 +6,6 @@
 #include "TankPlayerController.generated.h"
 
 class UUserWidget;
-class ATank;
 class UTankAimingComponent;
 /**
  * 
@@ -36,10 +35,11 @@ public:
 	virtual void Tick(float deltaSeconds) override;
 	
 protected:
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-	ATank* GetControlledTank() const;
+	//UFUNCTION(BlueprintCallable, Category = "Setup")
 
 private:
 	void Aim();
 	bool DoRaycast(FVector& hitLocation) const;
+
+    UTankAimingComponent* aimingComponent;
 };

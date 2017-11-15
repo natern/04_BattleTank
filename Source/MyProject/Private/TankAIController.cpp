@@ -2,8 +2,7 @@
 
 #include "MyProject.h"
 #include "TankAIController.h"
-#include "Tank.h"
-#include "TankPlayerController.h"
+#include "TankAimingComponent.h"
 
 ATankAIController::ATankAIController() :
 	fireConstantly(false),
@@ -24,15 +23,16 @@ void ATankAIController::Tick(float deltaSeconds)
 
 void ATankAIController::Aim()
 {
-	ATank* controlledTank = Cast<ATank>(GetPawn());
-	ATank* playerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	APawn* controlledTank = GetPawn();
+    UTankAimingComponent* aimingComponent = controlledTank->FindComponentByClass<UTankAimingComponent>();
+	APawn* playerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
 	if(playerTank && controlledTank)
 	{
 		MoveToActor(playerTank, acceptanceRadius);
-		controlledTank->AimAt(playerTank->GetTargetLocation(controlledTank));
-		if (fireConstantly)
+        aimingComponent->AimAt(playerTank->GetTargetLocation(controlledTank));
+		if(fireConstantly)
 		{
-			controlledTank->Fire();
+            aimingComponent->Fire();
 		}
 	}
 }
