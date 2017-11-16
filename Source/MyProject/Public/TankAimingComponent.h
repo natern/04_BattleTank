@@ -49,6 +49,9 @@ public:
     float launchSpeed;
     UPROPERTY(EditDefaultsOnly, Category = "Firing")
     float reloadTime;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Firing")
+    float barrelAimThreshold = 0.01f;
     UPROPERTY(EditDefaultsOnly, Category = "Firing")
     TSubclassOf<AProjectile> projectileType;
 

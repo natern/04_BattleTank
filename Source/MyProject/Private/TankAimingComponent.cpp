@@ -78,7 +78,7 @@ void UTankAimingComponent::MoveTurretAndBarrel(const FVector& direction)
         auto deltaRotator = aimRotator - barrelRotator;
         if(IsReloaded())
         {
-            if(barrelForward.Equals(direction, 0.01f))
+            if(barrelForward.Equals(direction, barrelAimThreshold))
             {
                 firingState = EFiringState::E_READY;
             }
