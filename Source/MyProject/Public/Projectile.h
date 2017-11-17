@@ -17,11 +17,18 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+    UFUNCTION(BlueprintImplementableEvent, Category = "State")
+    void OnImpact(AProjectile* projectile);
 
 	void Launch(float speed);
 
 protected:
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    UStaticMeshComponent* collisionMesh;
+
 	UProjectileMovementComponent* moveComponent;
+
+private:
+    UFUNCTION()
+    void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

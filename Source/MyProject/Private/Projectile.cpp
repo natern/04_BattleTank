@@ -7,7 +7,13 @@
 AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = false;
+
+    collisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Collision Mesh"));
+    SetRootComponent(collisionMesh);
+    collisionMesh->SetNotifyRigidBodyCollision(true);
+    collisionMesh->SetVisibility(false);
+
 	moveComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("Movement Component"));
 	if (moveComponent)
 	{
@@ -19,13 +25,7 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AProjectile::Tick( float DeltaTime )
-{
-	Super::Tick( DeltaTime );
+    collisionMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 }
 
 void AProjectile::Launch(float speed)
@@ -33,4 +33,9 @@ void AProjectile::Launch(float speed)
 	moveComponent->InitialSpeed = speed;
 	moveComponent->SetVelocityInLocalSpace(FVector::ForwardVector * speed);
 	moveComponent->Activate();
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+    OnImpact(this);
 }
